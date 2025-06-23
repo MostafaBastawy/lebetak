@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "53633026618",
+    "project_id": "esshp-e9a3e",
+    "storage_bucket": "esshp-e9a3e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53633026618:android:7a0a646c4a93529ea54303",
+        "android_client_info": {
+          "package_name": "com.dares.apexmyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53633026618:android:7b442a48b23631cfa54303",
+        "android_client_info": {
+          "package_name": "com.lebetak.deliveryapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53633026618:android:db782ecc5613bb20a54303",
+        "android_client_info": {
+          "package_name": "com.lebetak.usersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53633026618:android:ff176f6fe851bd9da54303",
+        "android_client_info": {
+          "package_name": "com.lebetakt.storeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
