@@ -1,16 +1,16 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:sixam_mart/features/auth/controllers/auth_controller.dart';
-import 'package:sixam_mart/features/cart/controllers/cart_controller.dart';
-import 'package:sixam_mart/features/splash/controllers/splash_controller.dart';
-import 'package:sixam_mart/features/notification/domain/models/notification_body_model.dart';
-import 'package:sixam_mart/helper/address_helper.dart';
-import 'package:sixam_mart/helper/auth_helper.dart';
-import 'package:sixam_mart/util/dimensions.dart';
-import 'package:sixam_mart/util/images.dart';
-import 'package:sixam_mart/common/widgets/no_internet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sixam_mart/common/widgets/no_internet_screen.dart';
+import 'package:sixam_mart/features/auth/controllers/auth_controller.dart';
+import 'package:sixam_mart/features/cart/controllers/cart_controller.dart';
+import 'package:sixam_mart/features/notification/domain/models/notification_body_model.dart';
+import 'package:sixam_mart/features/splash/controllers/splash_controller.dart';
+import 'package:sixam_mart/helper/address_helper.dart';
+import 'package:sixam_mart/helper/auth_helper.dart';
+import 'package:sixam_mart/util/images.dart';
 
 class SplashScreen extends StatefulWidget {
   final NotificationBodyModel? body;
@@ -32,14 +32,14 @@ class SplashScreenState extends State<SplashScreen> {
     _onConnectivityChanged = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
       bool isConnected = result.contains(ConnectivityResult.wifi) || result.contains(ConnectivityResult.mobile);
 
-      if(!firstTime) {
+      if (!firstTime) {
         isConnected ? ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar() : const SizedBox();
         ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(
           backgroundColor: isConnected ? Colors.green : Colors.red,
           duration: Duration(seconds: isConnected ? 3 : 6000),
           content: Text(isConnected ? 'connected'.tr : 'no_connection'.tr, textAlign: TextAlign.center),
         ));
-        if(isConnected) {
+        if (isConnected) {
           Get.find<SplashController>().getConfigData(notificationBody: widget.body);
         }
       }
@@ -48,7 +48,7 @@ class SplashScreenState extends State<SplashScreen> {
     });
 
     Get.find<SplashController>().initSharedData();
-    if((AuthHelper.getGuestId().isNotEmpty || AuthHelper.isLoggedIn()) && Get.find<SplashController>().cacheModule != null) {
+    if ((AuthHelper.getGuestId().isNotEmpty || AuthHelper.isLoggedIn()) && Get.find<SplashController>().cacheModule != null) {
       Get.find<CartController>().getCartDataOnline();
     }
     // _route();
@@ -155,7 +155,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Get.find<SplashController>().initSharedData();
-    if(AddressHelper.getUserAddressFromSharedPref() != null && AddressHelper.getUserAddressFromSharedPref()!.zoneIds == null) {
+    if (AddressHelper.getUserAddressFromSharedPref() != null && AddressHelper.getUserAddressFromSharedPref()!.zoneIds == null) {
       Get.find<AuthController>().clearSharedAddress();
     }
 
@@ -164,15 +164,15 @@ class SplashScreenState extends State<SplashScreen> {
       body: GetBuilder<SplashController>(builder: (splashController) {
         return splashController.hasConnection
             ? Stack(
-          fit: StackFit.expand,
-          children: [
-            // الخلفية
-            Image.asset(
-              Images.logo, // تأكد من تعريف هذا المتغير في ملف images.dart
-              fit: BoxFit.fill,
-            ),
-            // المحتوى فوق الخلفية
-            /*Center(
+                fit: StackFit.expand,
+                children: [
+                  // الخلفية
+                  Image.asset(
+                    Images.logo, // تأكد من تعريف هذا المتغير في ملف images.dart
+                    fit: BoxFit.fill,
+                  ),
+                  // المحتوى فوق الخلفية
+                  /*Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -181,8 +181,8 @@ class SplashScreenState extends State<SplashScreen> {
                 ],
               ),
             ),*/
-          ],
-        )
+                ],
+              )
             : NoInternetScreen(child: SplashScreen(body: widget.body));
       }),
     );

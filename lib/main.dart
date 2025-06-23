@@ -111,7 +111,9 @@ Future<void> main() async {
       }
 
       runApp(MyApp(languages: languages, body: body));
-    } catch (e) {}
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, StackTrace.current);
+    }
   }, (error, stackTrace) {
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
   });

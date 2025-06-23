@@ -3,19 +3,25 @@ import Flutter
 import GoogleMaps
 import Firebase
 import FBSDKCoreKit
+import flutter_local_notifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyBYDo5xRPu2FR2R3x8HUOKeYKmaUbd8Eu0")
-    if #available(iOS 10.0, *) {
-      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        FirebaseApp.configure()
+        GMSServices.provideAPIKey("AIzaSyBYDo5xRPu2FR2R3x8HUOKeYKmaUbd8Eu0")
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+        }
+        FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
+            GeneratedPluginRegistrant.register(with: registry)}
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+        }
+        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
 }
