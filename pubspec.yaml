@@ -72,6 +72,7 @@ dependencies:
   image_network: ^2.6.0
 
 
+
 dependency_overrides:
   collection: ^1.19.1
   web: ^1.1.0

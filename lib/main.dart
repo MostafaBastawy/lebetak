@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,15 +34,26 @@ import 'helper/get_di.dart' as di;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    FirebaseCrashlytics.instance.recordFlutterError(details);
+  };
 
-  if (ResponsiveHelper.isMobilePhone()) {
-    HttpOverrides.global = MyHttpOverrides();
-  }
-  setPathUrlStrategy();
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+    return true;
+  };
 
-  /*///Pass all uncaught "fatal" errors from the framework to Crashlytics
+  await runZonedGuarded(() async {
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+      if (ResponsiveHelper.isMobilePhone()) {
+        HttpOverrides.global = MyHttpOverrides();
+      }
+      setPathUrlStrategy();
+
+      /*///Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -53,52 +65,56 @@ Future<void> main() async {
     return true;
   };*/
 
-  // if(GetPlatform.isWeb){
-  //   await Firebase.initializeApp(options: const FirebaseOptions(
-  //       apiKey: "AIzaSyD0Z911mOoWCVkeGdjhIKwWFPRgvd6ZyAw",
-  //       authDomain: "stackmart-500c7.firebaseapp.com",
-  //       projectId: "stackmart-500c7",
-  //       storageBucket: "stackmart-500c7.appspot.com",
-  //       messagingSenderId: "491987943015",
-  //       appId: "1:491987943015:web:d8bc7ab8dbc9991c8f1ec2"
-  //   ));
-  // } else if(GetPlatform.isAndroid) {
-  //   await Firebase.initializeApp(
-  //     options: const FirebaseOptions(
-  //       apiKey: "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0",
-  //       appId: "1:53633026618:android:db782ecc5613bb20a54303",
-  //       messagingSenderId: "53633026618",
-  //       projectId: "esshp-e9a3e",
-  //     ),
-  //   );
-  // } else {
-  //   await Firebase.initializeApp();
-  // }
+      // if(GetPlatform.isWeb){
+      //   await Firebase.initializeApp(options: const FirebaseOptions(
+      //       apiKey: "AIzaSyD0Z911mOoWCVkeGdjhIKwWFPRgvd6ZyAw",
+      //       authDomain: "stackmart-500c7.firebaseapp.com",
+      //       projectId: "stackmart-500c7",
+      //       storageBucket: "stackmart-500c7.appspot.com",
+      //       messagingSenderId: "491987943015",
+      //       appId: "1:491987943015:web:d8bc7ab8dbc9991c8f1ec2"
+      //   ));
+      // } else if(GetPlatform.isAndroid) {
+      //   await Firebase.initializeApp(
+      //     options: const FirebaseOptions(
+      //       apiKey: "AIzaSyBtApvnjn4AUyjglgKdLDveIr2C3FdmXL0",
+      //       appId: "1:53633026618:android:db782ecc5613bb20a54303",
+      //       messagingSenderId: "53633026618",
+      //       projectId: "esshp-e9a3e",
+      //     ),
+      //   );
+      // } else {
+      //   await Firebase.initializeApp();
+      // }
 
-  Map<String, Map<String, String>> languages = await di.init();
+      Map<String, Map<String, String>> languages = await di.init();
 
-  NotificationBodyModel? body;
-  try {
-    if (GetPlatform.isMobile) {
-      final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
-      if (remoteMessage != null) {
-        body = NotificationHelper.convertNotification(remoteMessage.data);
+      NotificationBodyModel? body;
+      try {
+        if (GetPlatform.isMobile) {
+          final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
+          if (remoteMessage != null) {
+            body = NotificationHelper.convertNotification(remoteMessage.data);
+          }
+          await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
+          FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
+        }
+      } catch (_) {}
+
+      if (ResponsiveHelper.isWeb()) {
+        await FacebookAuth.instance.webAndDesktopInitialize(
+          appId: "380903914182154",
+          cookie: true,
+          xfbml: true,
+          version: "v15.0",
+        );
       }
-      await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
-      FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-    }
-  } catch (_) {}
 
-  if (ResponsiveHelper.isWeb()) {
-    await FacebookAuth.instance.webAndDesktopInitialize(
-      appId: "380903914182154",
-      cookie: true,
-      xfbml: true,
-      version: "v15.0",
-    );
-  }
-
-  runApp(MyApp(languages: languages, body: body));
+      runApp(MyApp(languages: languages, body: body));
+    } catch (e) {}
+  }, (error, stackTrace) {
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+  });
 }
 
 class MyApp extends StatefulWidget {
